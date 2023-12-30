@@ -5,6 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 
 import postsRoutes from "./routes/posts.js";
+import userRoutes from "./routes/user.js";
 
 const PORT = process.env.PORT || 4000;
 
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(morgan("dev"));
 
 app.use("/posts", postsRoutes);
+app.use("/user", userRoutes);
 
 const connect = async () => {
   try {

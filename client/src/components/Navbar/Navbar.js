@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { AppBar, Avatar, Button, Toolbar, Typography } from "@material-ui/core";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import memories from "../../images/memories.png";
+import memoriesLogo from "../../images/memories-Logo.png";
+import memoriesText from "../../images/memories-Text.png";
 import useStyles from "./styles";
 import { useDispatch } from "react-redux";
+import decode from "jwt-decode"
 
 const Navbar = () => {
   const classes = useStyles();
@@ -20,28 +22,26 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = user?.token;
+
+    if (token) {
+      const decodedToken = decode(token);
+      if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+    }
+
     setUser(JSON.parse(localStorage.getItem('profile')));
   }, [location]);
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography
-          component={Link}
-          to="/"
-          className={classes.heading}
-          variant="h2"
-          align="center"
-        >
-          Memories
-        </Typography>
+      <Link to="/" className={classes.brandContainer}>
+        <img src={memoriesText} alt="icon" height="45px" />
         <img
           className={classes.image}
-          src={memories}
-          alt="memories"
-          height="60"
+          src={memoriesLogo}
+          alt="icon"
+          height="48px"
         />
-      </div>
+      </Link>
       <Toolbar className={classes.toolbar}>
         {user ? (
             <div className={classes.profile}>

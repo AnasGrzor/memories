@@ -14,20 +14,39 @@ import Input from "./Input";
 import jwt_decode from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { signin, signup } from "../../actions/auth";
 
+const initialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+};
 
 const Auth = () => {
-  const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
   const history = useHistory();
+  const classes = useStyles();
 
-  const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword);
+  const handleShowPassword = () =>
+    setShowPassword((prevShowPassword) => !prevShowPassword);
 
-  const handleSubmit = () => {};
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const handleChange = () => {};
+    if (isSignUp) {
+      dispatch(signup(formData, history));
+    } else {
+      dispatch(signin(formData, history));
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const switchMode = () => {
     setIsSignUp((prevIsSignUp) => !prevIsSignUp);
@@ -38,24 +57,24 @@ const Auth = () => {
     const token = res?.credential;
     const result = jwt_decode(res?.credential);
     try {
-        dispatch({type: "AUTH", data: {result, token}});
-        history.push("/");
+      dispatch({ type: "AUTH", data: { result, token } });
+      history.push("/");
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }
+  };
 
   const googleFailure = (error) => {
     console.log(error);
     console.log("Google Sign In was unsuccessful. Try again later");
   };
-//   'idpiframe_initialization_failed', details: 'You have created a new client application that use…i/web/guides/gis-migration) for more information.'}
-// details
-// : 
-// "You have created a new client application that uses libraries for user authentication or authorization that are deprecated. New clients must use the new libraries instead. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information."
-// error
-// : 
-// "idpiframe_initialization_failed"
+  //   'idpiframe_initialization_failed', details: 'You have created a new client application that use…i/web/guides/gis-migration) for more information.'}
+  // details
+  // :
+  // "You have created a new client application that uses libraries for user authentication or authorization that are deprecated. New clients must use the new libraries instead. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information."
+  // error
+  // :
+  // "idpiframe_initialization_failed"
 
   return (
     <Container component="main" maxWidth="xs">
@@ -125,7 +144,7 @@ const Auth = () => {
 
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Button onClick={switchMode} variant="body2" color="primary">
+              <Button onClick={switchMode} variant="text" color="primary" size="small" className={classes.button} >
                 {isSignUp
                   ? "Already have an account? Sign in"
                   : "Don't have an account? Sign Up"}
